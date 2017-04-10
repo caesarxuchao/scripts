@@ -3,17 +3,25 @@ set -o nounset
 set -o pipefail
 
 old_pkg="api"
-new_pkg="ref"
+new_pkg="resource"
 
 old_import_path="\"k8s.io/kubernetes/pkg/api\""
 new_import_path="\"k8s.io/kubernetes/pkg/api/$new_pkg\""
 
-new_file="pkg/api/ref/ref.go"
+new_file="pkg/api/$new_pkg/resource_helpers.go"
 
-functions="GetPartialReference
-GetReference
-ErrNilObject
-ErrNoSelfLink"
+functions="GetContainerStatus
+GetExistingContainerStatus
+IsPodAvailable
+IsPodReady
+IsPodReadyConditionTrue
+GetPodReadyCondition
+GetPodCondition
+GetNodeCondition
+UpdatePodCondition
+IsNodeReady
+PodRequestsAndLimits
+ExtractContainerResourceValue"
 
 for function in $functions; do
     echo "====================================="
@@ -42,4 +50,3 @@ done
 git checkout HEAD $K1/staging
 # exceptions
 #sed -i "/k8s.io\/kubernetes\/pkg\/api\"/d" $K1/pkg/api/v1/validation/validation.go
-sed -i "/k8s.io\/kubernetes\/pkg\/api\/ref\"/d" pkg/proxy/userspace/proxier.go
