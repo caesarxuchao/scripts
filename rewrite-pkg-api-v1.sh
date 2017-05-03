@@ -8,7 +8,8 @@ set -o pipefail
 # git grep "func" defaults.go | awk '{print $2}' | awk -F "(" '{print $1}'
 # use tagbar to get all the constants
 
-types="ObjectMeta
+types="SchemeBuilder
+ObjectMeta
 Volume
 VolumeSource
 PersistentVolumeClaimVolumeSource
@@ -389,50 +390,18 @@ VolumeAvailable
 VolumeBound
 VolumeFailed
 VolumePending
-VolumeReleased
-SetDefaults_ResourceList
-SetDefaults_PodExecOptions
-SetDefaults_PodAttachOptions
-SetDefaults_ReplicationController
-SetDefaults_Volume
-SetDefaults_ContainerPort
-SetDefaults_Container
-SetDefaults_ServiceSpec
-SetDefaults_Pod
-SetDefaults_PodSpec
-SetDefaults_Probe
-SetDefaults_SecretVolumeSource
-SetDefaults_ConfigMapVolumeSource
-SetDefaults_DownwardAPIVolumeSource
-SetDefaults_Secret
-SetDefaults_ProjectedVolumeSource
-SetDefaults_PersistentVolume
-SetDefaults_PersistentVolumeClaim
-SetDefaults_ISCSIVolumeSource
-SetDefaults_AzureDiskVolumeSource
-SetDefaults_Endpoints
-SetDefaults_HTTPGetAction
-SetDefaults_NamespaceStatus
-SetDefaults_Node
-SetDefaults_NodeStatus
-SetDefaults_ObjectFieldSelector
-SetDefaults_LimitRangeItem
-SetDefaults_ConfigMap
-defaultHostNetworkPorts
-SetDefaults_RBDVolumeSource
-SetDefaults_ScaleIOVolumeSource"
+VolumeReleased"
 
 for t in $types; do
     # By placing the ']' as the first character immediately after the opening
     # bracket, it is interpreted as a member of the character set rather than a
     # closing bracket. Placing a '[' anywhere inside the brackets makes it a
     # member of the set.
-    find ./ -maxdepth 1 -name "*.go" | xargs sed -i "s|\([][*(&[:space:]]\)$t\>|\1v1.$t|g"
+    find ./ -maxdepth 1 -name "*.go" | grep -v builder.go | xargs sed -i "s|\([][*(&[:space:]]\)$t\>|\1v1.$t|g"
 done
 
-old_import_path="\"k8s.io/kubernetes/pkg/api\""
 new_import_path="\"k8s.io/api/core/v1\""
-files=$(find ./ -maxdepth 1 -name "*.go")
+files=$(find ./ -maxdepth 1 -name "*.go" | grep -v builder.go )
 for f in $files; do
     sed -i "s|import (|import (\n$new_import_path|g" $f
 done

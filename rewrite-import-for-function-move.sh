@@ -2,44 +2,16 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
-old_pkg="v1"
-new_pkg="v1helper"
+old_pkg="resource"
+new_pkg="nodeutil"
 
-old_import_path="\"k8s.io/kubernetes/pkg/api/v1\""
-new_import_path="v1helper \"k8s.io/kubernetes/pkg/api/v1/helper\""
+old_import_path="\"k8s.io/kubernetes/pkg/api/v1/resource\""
+new_import_path="nodeutil \"k8s.io/kubernetes/pkg/api/v1/node\""
 
-new_file="pkg/api/v1/$new_pkg/helpers.go"
+new_file="pkg/api/v1/pod/util.go"
 
-functions="IsOpaqueIntResourceName
-OpaqueIntResourceName
-IsServiceIPSet
-IsServiceIPRequested
-AddToNodeAddresses
-LoadBalancerStatusEqual
-LoadBalancerStatusDeepCopy
-GetAccessModesAsString
-GetAccessModesFromString
-NodeSelectorRequirementsAsSelector
-AddOrUpdateTolerationInPod
-TolerationsTolerateTaint
-TolerationsTolerateTaintsWithFilter
-DeleteTaintsByKey
-DeleteTaint
-GetMatchingTolerations
-GetAvoidPodsFromNodeAnnotations
-SysctlsFromPodAnnotations
-SysctlsFromPodAnnotation
-PodAnnotationsFromSysctls
-AddOrUpdateTaint
-TaintExists
-RemoveTaint
-GetAffinityFromPodAnnotations
-GetPersistentVolumeClass
-GetPersistentVolumeClaimClass
-PersistentVolumeClaimHasClass"
-
-
-
+functions="GetNodeCondition
+IsNodeReady"
 
 for function in $functions; do
     echo "====================================="
@@ -70,4 +42,4 @@ done
 git checkout HEAD $K1/staging
 # exceptions
 #sed -i "/k8s.io\/kubernetes\/pkg\/api\"/d" $K1/pkg/api/v1/validation/validation.go
-sed -i "/k8s.io\/kubernetes\/pkg\/api\/ref\"/d" pkg/proxy/userspace/proxier.go
+#sed -i "/k8s.io\/kubernetes\/pkg\/api\/ref\"/d" pkg/proxy/userspace/proxier.go
