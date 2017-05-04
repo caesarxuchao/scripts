@@ -22,22 +22,39 @@ settings/v1alpha1
 storage/v1beta1
 storage/v1"
 
-files=$(find pkg/ cmd/ cluster/ plugin/ federation/ -name "*.go" \
+files=$(find pkg/ cmd/ cluster/ plugin/ federation/ test/ -name "*.go" \
         \(                         \
             -not \(                    \
                 \(                     \
-                    -path ./pkg/api -o  \
-                    -path ./pkg/apis   \
-                    -path ./vendor/k8s.io/client-go   \
+                    -path pkg/api\* -o  \
+                    -path "pkg/apis/*" -o \
+                    -path vendor/k8s.io/client-go\*   \
                 \) -prune              \
             \)                         \
         \))
 
+files=$(grep -l "k8s.io/kubernetes/pkg/apis.*v" $files)
+
+readonly files 
 
 #============= section II, fix the original packages======================"
 for gv in $GROUP_VERSIONS; do
     # git doesn't understand symlink, so use staging/src
     new_import_path="k8s.io/api/${gv}"
-    old_import_path="kubernetes/pkg/apis/${gv}"
+    old_import_path="k8s.io/kubernetes/pkg/apis/${gv}"
     echo $files | xargs sed -i "s|$old_import_path|$new_import_path|g"
+done
+
+
+#certificates
+# certificates/v1beta1
+certificates_exceptions="ParseCSR
+"
+for word in certificates_exceptions; do
+    new_import_path="\"k8s.io/api/certificates/v1beta1\""
+    old_import_path="k8s_certificates_v1beta1 \"k8s.io/kubernetes/pkg/apis/certificates/v1beta1\""
+    subfiles=$(grep -l $word $files)
+    sed -i -r "s/[_a-z0-9]*\.$word/k8s_certificates_v1beta1.$word/g" $subfiles
+    sed -i -r "s|$old_import_path|$old_import_path\n$new_import_path|g" $file
+    goimports -w $file
 done
