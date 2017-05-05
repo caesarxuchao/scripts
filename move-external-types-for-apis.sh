@@ -32,6 +32,24 @@ zz_generated.deepcopy.go"
 filesToCopy="register.go
 doc.go"
 
+
+for gv in $GROUP_VERSIONS; do
+    newFromKubeRoot="vendor/k8s.io/api/${gv}"
+    newAbsolute="$K1/$newFromKubeRoot"
+    mkdir -p $newAbsolute
+    originFromKubeRoot="pkg/apis/${gv}"
+    originAbsolute="$K1/$originFromKubeRoot"
+    
+    version=${gv#*/}
+    originRegisterDoc="$originAbsolute/register.go"
+    sed -i '/func addKnownTypes/,$d' $originRegisterDoc
+    sed -i "/Adds the list of known types to/d" $originRegisterDoc
+    sed -i "s|addKnownTypes|$version.AddKnownTypes|g" $originRegisterDoc
+    goimports -w $originRegisterDoc
+done
+exit 0
+
+
 for gv in $GROUP_VERSIONS; do
     newFromKubeRoot="vendor/k8s.io/api/${gv}"
     newAbsolute="$K1/$newFromKubeRoot"
@@ -69,6 +87,9 @@ defaulter-gen\1\n\
     originRegisterDoc="$originAbsolute/register.go"
     sed -i "/TODO/,+2d" $originRegisterDoc
 	sed -i "s|&SchemeBuilder|\&$version.SchemeBuilder|g" $originRegisterDoc
+    sed -i '/func addKnownTypes/,$d' $originRegisterDoc
+    sed -i "/Adds the list of known types to/d" $originRegisterDoc
+    sed -i "s|addKnownTypes|$version.AddKnownTypes|g" $originRegisterDoc
 
     newDeepcopy="$newAbsolute/zz_generated.deepcopy.go"
     sed -i "s|k8s.io/kubernetes/pkg/apis|k8s.io/api|g" $newDeepcopy

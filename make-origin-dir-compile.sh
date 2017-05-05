@@ -46,13 +46,13 @@ for gv in $GROUP_VERSIONS; do
         types="$types ResourceMetricSourceType"
     fi
     if [[ $gv == "apps/v1beta1" ]]; then
-        types="$types RollingUpdateDeploymentStrategyType"
+        types="$types RollingUpdateDeploymentStrategyType RecreateDeploymentStrategyType"
     fi
     if [[ $gv == "batch/v2alpha1" ]]; then
-        types="$types AllowConcurrent"
+        types="$types AllowConcurrent ForbidConcurrent"
     fi
     if [[ $gv == "extensions/v1beta1" ]]; then
-        types="$types OnDeleteDaemonSetStrategyType RollingUpdateDaemonSetStrategyType RollingUpdateDeploymentStrategyType"
+        types="$types OnDeleteDaemonSetStrategyType RollingUpdateDaemonSetStrategyType RollingUpdateDeploymentStrategyType RecreateDeploymentStrategyType"
     fi
 
     for t in $types; do
