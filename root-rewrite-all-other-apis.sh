@@ -40,8 +40,8 @@ readonly files
 #============= section II, fix the original packages======================"
 for gv in $GROUP_VERSIONS; do
     # git doesn't understand symlink, so use staging/src
-    new_import_path="k8s.io/api/${gv}"
-    old_import_path="k8s.io/kubernetes/pkg/apis/${gv}"
+    new_import_path="\"k8s.io/api/${gv}\""
+    old_import_path="\"k8s.io/kubernetes/pkg/apis/${gv}\""
     echo $files | xargs sed -i "s|$old_import_path|$new_import_path|g"
 done
 
@@ -50,11 +50,12 @@ done
 # certificates/v1beta1
 certificates_exceptions="ParseCSR
 "
-for word in certificates_exceptions; do
+for word in $certificates_exceptions; do
     new_import_path="\"k8s.io/api/certificates/v1beta1\""
     old_import_path="k8s_certificates_v1beta1 \"k8s.io/kubernetes/pkg/apis/certificates/v1beta1\""
-    subfiles=$(grep -l $word $files)
+    subfiles=$(grep -l "[_a-z0-9]*$word" $files)
+    subfiles=$(grep -l $new_import_path $subfiles)
     sed -i -r "s/[_a-z0-9]*\.$word/k8s_certificates_v1beta1.$word/g" $subfiles
-    sed -i -r "s|$old_import_path|$old_import_path\n$new_import_path|g" $file
-    goimports -w $file
+    sed -i -r "s|$new_import_path|$new_import_path\n$old_import_path|g" $subfiles
+    goimports -w $subfiles
 done

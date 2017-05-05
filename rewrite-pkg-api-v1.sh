@@ -390,7 +390,8 @@ VolumeAvailable
 VolumeBound
 VolumeFailed
 VolumePending
-VolumeReleased"
+VolumeReleased
+HostAlias"
 
 for t in $types; do
     # By placing the ']' as the first character immediately after the opening

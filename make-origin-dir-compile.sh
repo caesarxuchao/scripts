@@ -70,4 +70,12 @@ for gv in $GROUP_VERSIONS; do
         sed -i "s|import (|import (\n$new_import_path|g" $f
         goimports -w $f
     done
+
+    # fix the generated conversion, conversion-gen would have made the same changes
+    conversion=$originAbsolute/zz_generated.conversion.go
+    sed -i "s|SchemeBuilder|localSchemeBuilder|g" $conversion
+
+    group=${gv%/*}
+    install=$originAbsolute/../install/install.go
+    sed -i "s|\(ImportPrefix.*\"\)k8s.io/kubernetes/pkg/apis/$group|\1k8s.io/api/$group|g" $install
 done

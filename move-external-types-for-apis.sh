@@ -26,7 +26,8 @@ storage/v1"
 filesToMove="types.go
 types_swagger_doc_generated.go
 types.generated.go
-generated.pb.go"
+generated.pb.go
+zz_generated.deepcopy.go"
 
 filesToCopy="register.go
 doc.go"
@@ -49,10 +50,10 @@ for gv in $GROUP_VERSIONS; do
     originDoc="$originAbsolute/doc.go"
     sed -i "/deepcopy-gen/d" "$originDoc"
     sed -i "/openapi-gen/d" "$originDoc"
-    sed -i "s|conversion-gen\(.*\)|conversion-gen\1,external_types=../../../${newFromKubeRoot}|g"  "$originDoc"
+    sed -i "s|conversion-gen\(.*\)|conversion-gen\1,external_types=../../../../${newFromKubeRoot}|g"  "$originDoc"
     sed -i "s|defaulter-gen\(.*\)|\
 defaulter-gen\1\n\
-// +k8s:defaulter-gen-input=../../../${newFromKubeRoot}|g" "$originDoc"
+// +k8s:defaulter-gen-input=../../../../${newFromKubeRoot}|g" "$originDoc"
 
     newDoc="$newAbsolute/doc.go"
     sed -i "/conversion-gen/d" "$newDoc"
@@ -63,6 +64,14 @@ defaulter-gen\1\n\
     sed -i "s|, addDefaultingFuncs||g" $newRegisterDoc
     sed -i "s|, addConversionFuncs||g" $newRegisterDoc
     sed -i "s|, RegisterDefaults||g" $newRegisterDoc
+
+    version=${gv#*/}
+    originRegisterDoc="$originAbsolute/register.go"
+    sed -i "/TODO/,+2d" $originRegisterDoc
+	sed -i "s|&SchemeBuilder|\&$version.SchemeBuilder|g" $originRegisterDoc
+
+    newDeepcopy="$newAbsolute/zz_generated.deepcopy.go"
+    sed -i "s|k8s.io/kubernetes/pkg/apis|k8s.io/api|g" $newDeepcopy
 done
 
 sed -i "s|k8s.io/kubernetes/pkg/apis/batch/v1|k8s.io/api/batch/v1|g" $K1/vendor/k8s.io/api/batch/v2alpha1/types.go
