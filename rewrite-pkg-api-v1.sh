@@ -391,7 +391,15 @@ VolumeBound
 VolumeFailed
 VolumePending
 VolumeReleased
-HostAlias"
+HostAlias
+NonConvertibleAnnotationPrefix
+BetaAnnotationExternalTraffic
+ServiceExternalTrafficPolicyTypeCluster
+AzureDataDiskKind
+AzureSharedBlobDisk
+AzureDataDiskKind
+LocalVolumeSource
+ServiceExternalTrafficPolicyType"
 
 for t in $types; do
     # By placing the ']' as the first character immediately after the opening

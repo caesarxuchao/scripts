@@ -85,3 +85,5 @@ sed -i "s/v1.Convert_extensions_ReplicaSet_to_v1_ReplicationController/k8s_api_v
 file="federation/apis/core/v1/defaults.go"
 sed -i "s|k8s.io/api/core/v1|k8s.io/kubernetes/pkg/api/v1|g" $file
 
+# it's an goimport bug
+sed -i "s|\"github.com/go-restful/swagger\"|\"github.com/emicklei/go-restful-swagger12\"|g" pkg/kubectl/cmd/util/factory.go

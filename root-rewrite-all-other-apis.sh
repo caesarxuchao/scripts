@@ -20,7 +20,9 @@ rbac/v1beta1
 rbac/v1alpha1
 settings/v1alpha1
 storage/v1beta1
-storage/v1"
+storage/v1
+admissionregistration/v1alpha1
+networking/v1"
 
 files=$(find pkg/ cmd/ cluster/ plugin/ federation/ test/ -name "*.go" \
         \(                         \

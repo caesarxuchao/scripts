@@ -20,7 +20,9 @@ rbac/v1beta1
 rbac/v1alpha1
 settings/v1alpha1
 storage/v1beta1
-storage/v1"
+storage/v1
+admissionregistration/v1alpha1
+networking/v1"
 
 
 filesToMove="types.go
@@ -32,25 +34,9 @@ zz_generated.deepcopy.go"
 filesToCopy="register.go
 doc.go"
 
-
 for gv in $GROUP_VERSIONS; do
-    newFromKubeRoot="vendor/k8s.io/api/${gv}"
-    newAbsolute="$K1/$newFromKubeRoot"
-    mkdir -p $newAbsolute
-    originFromKubeRoot="pkg/apis/${gv}"
-    originAbsolute="$K1/$originFromKubeRoot"
-    
-    version=${gv#*/}
-    originRegisterDoc="$originAbsolute/register.go"
-    sed -i '/func addKnownTypes/,$d' $originRegisterDoc
-    sed -i "/Adds the list of known types to/d" $originRegisterDoc
-    sed -i "s|addKnownTypes|$version.AddKnownTypes|g" $originRegisterDoc
-    goimports -w $originRegisterDoc
-done
-exit 0
-
-
-for gv in $GROUP_VERSIONS; do
+    group=${gv%/*}
+    echo group is $group
     newFromKubeRoot="vendor/k8s.io/api/${gv}"
     newAbsolute="$K1/$newFromKubeRoot"
     mkdir -p $newAbsolute
@@ -68,7 +54,9 @@ for gv in $GROUP_VERSIONS; do
     originDoc="$originAbsolute/doc.go"
     sed -i "/deepcopy-gen/d" "$originDoc"
     sed -i "/openapi-gen/d" "$originDoc"
-    sed -i "s|conversion-gen\(.*\)|conversion-gen\1,external_types=../../../../${newFromKubeRoot}|g"  "$originDoc"
+    sed -i "s|conversion-gen=k8s.io/kubernetes/pkg/apis/$group|\
+conversion-gen=k8s.io/kubernetes/pkg/apis/$group\n\
+// +k8s:conversion-gen-external-types=../../../../${newFromKubeRoot}|g" "$originDoc"
     sed -i "s|defaulter-gen\(.*\)|\
 defaulter-gen\1\n\
 // +k8s:defaulter-gen-input=../../../../${newFromKubeRoot}|g" "$originDoc"
