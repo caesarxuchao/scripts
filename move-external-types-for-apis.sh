@@ -71,13 +71,14 @@ defaulter-gen\1\n\
     sed -i "s|, addConversionFuncs||g" $newRegisterDoc
     sed -i "s|, RegisterDefaults||g" $newRegisterDoc
 
-    version=${gv#*/}
+    #version=${gv#*/}
+    gvNoHyphen=$(echo ${gv} | sed "s/\///g")
     originRegisterDoc="$originAbsolute/register.go"
     sed -i "/TODO/,+2d" $originRegisterDoc
-	sed -i "s|&SchemeBuilder|\&$version.SchemeBuilder|g" $originRegisterDoc
+	sed -i "s|&SchemeBuilder|\&$gvNoHyphen.SchemeBuilder|g" $originRegisterDoc
     sed -i '/func addKnownTypes/,$d' $originRegisterDoc
     sed -i "/Adds the list of known types to/d" $originRegisterDoc
-    sed -i "s|addKnownTypes|$version.AddKnownTypes|g" $originRegisterDoc
+    sed -i "s|addKnownTypes|$gvNoHyphen.AddKnownTypes|g" $originRegisterDoc
 
     newDeepcopy="$newAbsolute/zz_generated.deepcopy.go"
     sed -i "s|k8s.io/kubernetes/pkg/apis|k8s.io/api|g" $newDeepcopy

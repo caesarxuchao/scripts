@@ -11,3 +11,4 @@ cp $K1/root-rewrite-all-other-apis.sh ./
 cp $K1/rewrite-client-go.sh ./
 cp $K1/root-rewrite-import-client-go-pkg-api.sh ./
 cp $K1/fix-casttype.sh ./
+cp $K1/remove-original-proto.sh ./

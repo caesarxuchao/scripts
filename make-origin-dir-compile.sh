@@ -98,6 +98,7 @@ for gv in $GROUP_VERSIONS; do
     sed -i '/func addKnownTypes/,$d' $originRegisterDoc
     sed -i "/Adds the list of known types to/d" $originRegisterDoc
     sed -i "s|addKnownTypes|$version.AddKnownTypes|g" $originRegisterDoc
+
     goimports -w $originRegisterDoc
 done
 

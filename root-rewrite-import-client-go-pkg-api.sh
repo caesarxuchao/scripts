@@ -7,9 +7,7 @@ files=$(find pkg/ cmd/ cluster/ plugin/ federation/ test/ staging/ -name "*.go" 
             -not \(                    \
                 \(                     \
                     -path pkg/api\* -o  \
-                    -path "pkg/apis/*" -o \
-                    -path staging/src/k8s.io/client-go\* -o \
-                    -path vendor/k8s.io/client-go\*   \
+                    -path "pkg/apis/*" \
                 \) -prune              \
             \)                         \
         \))
