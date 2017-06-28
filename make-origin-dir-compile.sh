@@ -50,7 +50,7 @@ for gv in $GROUP_VERSIONS; do
         types="$types ResourceMetricSourceType"
     fi
     if [[ $gv == "apps/v1beta1" ]]; then
-        types="$types RollingUpdateDeploymentStrategyType RecreateDeploymentStrategyType OrderedReadyPodManagement OnDeleteStatefulSetStrategyType"
+        types="$types RollingUpdateDeploymentStrategyType RecreateDeploymentStrategyType OrderedReadyPodManagement OnDeleteStatefulSetStrategyType RollingUpdateStatefulSetStrategyType"
     fi
     if [[ $gv == "batch/v2alpha1" ]]; then
         types="$types AllowConcurrent ForbidConcurrent"

@@ -64,9 +64,12 @@ defaulter-gen\1\n\
     newDoc="$newAbsolute/doc.go"
     sed -i "/conversion-gen/d" "$newDoc"
     sed -i "/defaulter-gen/d" "$newDoc"
+    # change the canonical import path
+    sed -i 's|// import "k8s.io/kubernetes/pkg/apis|// import "k8s.io/api|g' "$newDoc"
     
     newRegisterDoc="$newAbsolute/register.go"
-    sed -i "s|addKnownTypes|AddKnownTypes|g" $newRegisterDoc
+    sed -i "s|SchemeBuilder\s*runtime.SchemeBuilder|SchemeBuilder = runtime.NewSchemeBuilder(addKnownTypes)|g" $newRegisterDoc
+    sed -i "/func init() {/,+6d" $newRegisterDoc
     sed -i "s|, addDefaultingFuncs||g" $newRegisterDoc
     sed -i "s|, addConversionFuncs||g" $newRegisterDoc
     sed -i "s|, RegisterDefaults||g" $newRegisterDoc
@@ -78,7 +81,7 @@ defaulter-gen\1\n\
 	sed -i "s|&SchemeBuilder|\&$gvNoHyphen.SchemeBuilder|g" $originRegisterDoc
     sed -i '/func addKnownTypes/,$d' $originRegisterDoc
     sed -i "/Adds the list of known types to/d" $originRegisterDoc
-    sed -i "s|addKnownTypes|$gvNoHyphen.AddKnownTypes|g" $originRegisterDoc
+    sed -i "s|addKnownTypes,||g" $originRegisterDoc
 
     newDeepcopy="$newAbsolute/zz_generated.deepcopy.go"
     sed -i "s|k8s.io/kubernetes/pkg/apis|k8s.io/api|g" $newDeepcopy
@@ -86,6 +89,7 @@ done
 
 sed -i "s|k8s.io/kubernetes/pkg/apis/batch/v1|k8s.io/api/batch/v1|g" $K1/vendor/k8s.io/api/batch/v2alpha1/types.go
 sed -i "s|k8s.io/kubernetes/pkg/apis/batch/v1|k8s.io/api/batch/v1|g" $K1/vendor/k8s.io/api/batch/v2alpha1/types.generated.go
+sed -i "s|k8s.io/kubernetes/pkg/apis/apps/v1beta1|k8s.io/api/apps/v1beta1|g" $K1/vendor/k8s.io/api/extensions/v1beta1/types.go
 
 # TODO: manually fix these two files?
 rm $K1/vendor/k8s.io/api/rbac/v1alpha1/generated.pb.go
